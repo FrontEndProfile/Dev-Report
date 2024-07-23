@@ -1,0 +1,192 @@
+<html><head><base href="https://cloud-library.netlify.app/">
+<title>Firebase Chat App Setup</title>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f0f0f0;
+  }
+  .step {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  h1, h2 {
+    color: #4285F4;
+  }
+  button {
+    background-color: #4285F4;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  button:hover {
+    background-color: #3267D6;
+  }
+  #chatApp {
+    display: none;
+  }
+  #messages {
+    height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: white;
+  }
+  #errorMessage {
+    color: red;
+    font-weight: bold;
+  }
+</style>
+</head>
+<body>
+  <h1>Firebase Chat App Setup</h1>
+  
+  <div id="setup">
+    <div class="step" id="step1">
+      <h2>Step 1: Create Firebase Project</h2>
+      <p>Click the button below to open Firebase Console in a new tab. Create a new project and note down the configuration.</p>
+      <button onclick="window.open('https://console.firebase.google.com/', '_blank')">Open Firebase Console</button>
+    </div>
+    
+    <div class="step" id="step2">
+      <h2>Step 2: Enter Firebase Configuration</h2>
+      <form id="configForm">
+        <label for="apiKey">API Key:</label><br>
+        <input type="text" id="apiKey" name="apiKey" required><br>
+        <label for="authDomain">Auth Domain:</label><br>
+        <input type="text" id="authDomain" name="authDomain" required><br>
+        <label for="projectId">Project ID:</label><br>
+        <input type="text" id="projectId" name="projectId" required><br>
+        <button type="submit">Initialize Firebase</button>
+      </form>
+    </div>
+    
+    <div class="step" id="step3" style="display:none;">
+      <h2>Step 3: Sign In with Google</h2>
+      <button id="signInButton">Sign In with Google</button>
+      <p id="errorMessage"></p>
+    </div>
+  </div>
+  
+  <div id="chatApp">
+    <h2>Chat App</h2>
+    <div id="messages"></div>
+    <form id="messageForm">
+      <input type="text" id="messageInput" placeholder="Type a message..." required>
+      <button type="submit">Send</button>
+    </form>
+  </div>
+
+  <script>
+    let firebaseApp;
+    
+    document.getElementById('configForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const config = {
+        apiKey: document.getElementById('apiKey').value,
+        authDomain: document.getElementById('authDomain').value,
+        projectId: document.getElementById('projectId').value
+      };
+      firebaseApp = firebase.initializeApp(config);
+      document.getElementById('step3').style.display = 'block';
+    });
+    
+    document.getElementById('signInButton').addEventListener('click', function() {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      
+      // Check if we're running in a secure context
+      if (window.isSecureContext) {
+        firebase.auth().signInWithPopup(provider)
+          .then((result) => {
+            console.log('User signed in:', result.user);
+            document.getElementById('setup').style.display = 'none';
+            document.getElementById('chatApp').style.display = 'block';
+            initChat();
+          }).catch((error) => {
+            console.error('Error during sign in:', error);
+            document.getElementById('errorMessage').textContent = 'Error: ' + error.message;
+          });
+      } else {
+        // If not in a secure context, use redirect method
+        firebase.auth().signInWithRedirect(provider)
+          .then(() => {
+            return firebase.auth().getRedirectResult();
+          })
+          .then((result) => {
+            if (result.user) {
+              console.log('User signed in:', result.user);
+              document.getElementById('setup').style.display = 'none';
+              document.getElementById('chatApp').style.display = 'block';
+              initChat();
+            }
+          })
+          .catch((error) => {
+            console.error('Error during sign in:', error);
+            document.getElementById('errorMessage').textContent = 'Error: ' + error.message;
+          });
+      }
+    });
+    
+    function initChat() {
+      const db = firebase.firestore();
+      const messagesRef = db.collection('messages');
+      
+      // Load and display messages
+      messagesRef.orderBy('timestamp').onSnapshot((snapshot) => {
+        const messagesDiv = document.getElementById('messages');
+        messagesDiv.innerHTML = '';
+        snapshot.forEach((doc) => {
+          const message = doc.data();
+          const messageElement = document.createElement('p');
+          messageElement.textContent = `${message.user}: ${message.text}`;
+          messagesDiv.appendChild(messageElement);
+        });
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      });
+      
+      // Send new messages
+      document.getElementById('messageForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const messageInput = document.getElementById('messageInput');
+        const message = messageInput.value;
+        const user = firebase.auth().currentUser;
+        
+        messagesRef.add({
+          user: user.displayName,
+          text: message,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        }).then(() => {
+          messageInput.value = '';
+        }).catch((error) => {
+          console.error('Error sending message:', error);
+        });
+      });
+    }
+
+    // Check for redirect result
+    firebase.auth().getRedirectResult().then((result) => {
+      if (result.user) {
+        console.log('User signed in after redirect:', result.user);
+        document.getElementById('setup').style.display = 'none';
+        document.getElementById('chatApp').style.display = 'block';
+        initChat();
+      }
+    }).catch((error) => {
+      console.error('Error after redirect:', error);
+      document.getElementById('errorMessage').textContent = 'Error after redirect: ' + error.message;
+    });
+  </script>
+</body>
+</html>
