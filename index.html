@@ -198,8 +198,8 @@
       left: 0;
       top: 0;
       width: 100%;
-      height: 100%;
-      overflow: auto;
+      height: 100vh;
+      overflow: hidden;
       background-color: rgba(0, 0, 0, 0.4);
     }
 
@@ -207,7 +207,7 @@
       background-color: var(--card-background);
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
       border-radius: 12px;
-      margin: 15% auto;
+      margin: 4% auto;
       padding: 20px 28px;
       width: 80%;
       max-width: 500px;
@@ -225,6 +225,7 @@
       justify-content: center;
       flex-direction: column;
     }
+
     .error-message {
       background-color: rgb(244, 103, 103);
       color: white;
@@ -302,7 +303,8 @@
         <label for="sheetRange">Sheet Range:</label>
         <input type="text" id="sheetRange" name="sheetRange" required placeholder="e.g., Sheet1!A:D">
 
-        <div id="errorSheet" class="error-message">Please Fill Valid credentials <br> <small style="font-size: 12px;padding: 5px;">after 3 seconds auto reload app</small></div>
+        <div id="errorSheet" class="error-message">Please Fill Valid credentials <br> <small
+            style="font-size: 12px;padding: 5px;">after 3 seconds auto reload app</small></div>
 
         <button type="submit">Connect</button>
       </form>
@@ -320,14 +322,17 @@
       const modal = document.getElementById('modal');
       const apiForm = document.getElementById('apiForm');
       const reportForm = document.getElementById('reportForm');
-      // const authButton = document.getElementById('authButton');
 
       // Check if API credentials are stored
       if (!localStorage.getItem('gapi_credentials')) {
         modal.style.display = 'block';
       } else {
-        initializeGoogleAPI(JSON.parse(localStorage.getItem('gapi_credentials')));
+        initializeGoogleAPI(JSON.parse(localStorage.getItem('gapi_credentials')))
+          .catch(() => {
+            modal.style.display = 'block';
+          });
       }
+
 
       apiForm.addEventListener('submit', function (e) {
         e.preventDefault();
@@ -338,16 +343,22 @@
           sheetRange: document.getElementById('sheetRange').value
         };
         localStorage.setItem('gapi_credentials', JSON.stringify(credentials));
-        modal.style.display = 'none';
-        initializeGoogleAPI(credentials);
+
+        initializeGoogleAPI(credentials).then(() => {
+          modal.style.display = 'none';
+        }).catch(() => {
+          document.getElementById('errorSheet').style.display = 'block';
+          setTimeout(() => {
+            document.getElementById('errorSheet').style.display = 'none';
+            location.reload()
+          }, 4000);
+        });
       });
 
       reportForm.addEventListener('submit', function (e) {
         e.preventDefault();
         handleAuthClick();
       });
-
-      // authButton.addEventListener('click', handleAuthClick);
     });
 
     function initializeGoogleAPI(credentials) {
@@ -359,14 +370,9 @@
           }).then(() => {
             gapiInited = true;
             resolve();
-            // maybeEnableButtons();
           }).catch(error => {
+            console.error('Error initializing Google API:', error);
             reject(error);
-            console.log("eerrrve cidvcd")
-            document.getElementById('errorSheet').style.display = 'block';
-            setTimeout(() => {
-              document.getElementById('errorSheet').style.display = 'none';
-            }, 3000);
           });
         });
 
@@ -377,15 +383,8 @@
         });
 
         gisInited = true;
-        // maybeEnableButtons();
       });
     }
-
-    // function maybeEnableButtons() {
-    //   if (gapiInited && gisInited) {
-    //     document.getElementById('authButton').style.display = 'block';
-    //   }
-    // }
 
     function handleAuthClick() {
       tokenClient.callback = async (resp) => {
@@ -435,7 +434,6 @@
         alert('Error submitting report. Please try again.');
       }
     }
-
   </script>
 </body>
 
