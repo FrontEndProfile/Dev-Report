@@ -346,7 +346,8 @@
           discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
         }).then(() => {
           gapiInited = true;
-          maybeEnableButtons();
+          console.log("API IS FAILER")
+          // maybeEnableButtons();
         });
       });
 
@@ -357,7 +358,7 @@
       });
 
       gisInited = true;
-      maybeEnableButtons();
+      // maybeEnableButtons();
     }
 
     // function maybeEnableButtons() {
