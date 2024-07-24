@@ -4,9 +4,37 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Developer Daily Report</title>
+  <meta name="theme-color" content="#000000" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./images/sheets.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="./images/sheets.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="./images/sheets.png">
+  <link rel="icon" type="image" href="./images/sheets.png">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="author" content="@FrontEnd">
+
+  <meta name="title"
+    content="The Developer Daily Report app is designed to revolutionize the way you track and report your daily tasks.">
+  <meta name="description"
+    content="I am Fazal as software Engineer | a leading software and technology company that powers the global travel industry. I have 3 years of professional experience in constructing responsive and scalable websites using Web Technologies, such as HTML, CSS, JS.">
+  <meta name="copyright" content="&copy; 2024 FrontEndProfile" />
+  <meta name="keywords"
+    content="FrontEnd Dev, Developer Daily Report App , Time-saving , Increased productivity, Better task management, Improved communication, Data-driven insights, Streamlined reporting process">
+
+  <link rel="canonical" href="https://frontendprofile.com/">
+  <meta property="og:title" content="Fazal Ul Rehman as FrontEnd Developer & UI Engineer">
+  <meta property="og:description"
+    content="FrontEnd Engineer at Sabre Corporation is a global technology company | Fazal Ul Rehman FrontEnd Engineer & Developer ">
+  <meta name="description"
+    content="I am Fazal as software Engineer | a leading software and technology company that powers the global travel industry. I have 3 years of professional experience in constructing responsive and scalable websites using Web Technologies, such as HTML, CSS, JS.">
+  <meta property="og:image" content="https://fazal-dev.vercel.app/static/media/fazal.5ba8168075b710cd8dcc.jpeg">
+  <meta property="og:url" content="https://frontendprofile.com/">
+  <meta property="og:site_name" content="FrontEndProfile">
+  <meta property="og:type" content="website">
+
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-  
+
     :root {
       --primary-color: #3498db;
       --text-color: #2c3e50;
@@ -17,19 +45,19 @@
       --success-color: #2ecc71;
       --hover-color: #2980b9;
     }
-  
+
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
       background-color: var(--background-color);
       margin: 0;
-      padding: 20px;
+      padding: 25px;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
       color: var(--text-color);
     }
-  
+
     .container {
       background-color: var(--card-background);
       padding: 40px;
@@ -38,28 +66,30 @@
       width: 100%;
       max-width: 500px;
     }
-  
+
     h1 {
       text-align: center;
       color: var(--text-color);
       font-size: 28px;
       font-weight: 700;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
     }
-  
+
     form {
       display: flex;
       flex-direction: column;
     }
-  
+
     label {
       margin-top: 20px;
       font-weight: 600;
       color: var(--text-color);
       font-size: 14px;
     }
-  
-    input, select, textarea {
+
+    input,
+    select,
+    textarea {
       width: 100%;
       padding: 12px 16px;
       margin-top: 8px;
@@ -71,6 +101,7 @@
       background-color: var(--card-background);
       color: var(--text-color);
     }
+
     fieldset {
       margin-block: 12px 5px;
       border: 1px solid #6a6a6a;
@@ -78,21 +109,25 @@
       box-sizing: border-box;
       border-radius: 8px;
     }
+
     textarea {
       width: 100%;
       resize: vertical;
     }
-  
-    input::placeholder, textarea::placeholder {
+
+    input::placeholder,
+    textarea::placeholder {
       color: var(--placeholder-color);
     }
-  
-    input:focus, select:focus, textarea:focus {
+
+    input:focus,
+    select:focus,
+    textarea:focus {
       outline: none;
       border-color: var(--primary-color);
       box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
     }
-  
+
     button {
       background-color: var(--primary-color);
       color: white;
@@ -105,15 +140,15 @@
       font-weight: 600;
       transition: all 0.3s ease;
     }
-  
+
     button:hover {
       background-color: var(--hover-color);
     }
-  
+
     .category-wrapper {
       position: relative;
     }
-  
+
     .category-wrapper::after {
       content: '▼';
       font-size: 12px;
@@ -124,20 +159,20 @@
       transform: translateY(-50%);
       pointer-events: none;
     }
-  
+
     select {
       appearance: none;
       -webkit-appearance: none;
       padding-right: 40px;
     }
-  
+
     .time-category {
       border: 1px solid var(--border-color);
       border-radius: 8px;
       padding: 20px;
       margin-top: 20px;
     }
-  
+
     .time-category legend {
       font-size: 16px;
       margin: 0 0 15px 0;
@@ -146,7 +181,7 @@
       padding: 4px 10px;
       border-radius: 4px;
     }
-  
+
     .success-message {
       background-color: var(--success-color);
       color: white;
@@ -184,12 +219,22 @@
       margin-top: 10px;
       width: 100%;
     }
+
+    .modal-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
   </style>
 </head>
 
 <body>
   <div class="container">
-    <h1>Developer Daily Report</h1>
+    <div class="modal-logo">
+      <img width="80" src="./images/front-end.png" alt="">
+      <h1>Forntend Report Sheet</h1>
+    </div>
     <form id="reportForm">
       <label for="task">Task:</label>
       <textarea id="task" name="task" rows="4" required placeholder="Describe your task here..."></textarea>
@@ -205,31 +250,37 @@
       </div>
 
       <fieldset class="time-category">
-      <legend>Optional Time category</legend>
-      <label for="feature">Feature Spent:</label>
-      <input type="number" id="feature" name="feature" min="0" step="0.5" placeholder="Hours spent on features">
-      <label for="featureBug">FeatureBug Spent:</label>
-      <input type="number" id="featureBug" name="featureBug" min="0" step="0.5" placeholder="Hours spent on feature bugs">
-      <label for="bugFixes">Bug Fixes Spent:</label>
-      <input type="number" id="bugFixes" name="bugFixes" min="0" step="0.5" placeholder="Hours spent on bug fixes">
+        <legend>Optional Time category</legend>
+        <label for="feature">Feature Spent:</label>
+        <input type="number" id="feature" name="feature" min="0" step="0.5" placeholder="Hours spent on features">
+        <label for="featureBug">FeatureBug Spent:</label>
+        <input type="number" id="featureBug" name="featureBug" min="0" step="0.5"
+          placeholder="Hours spent on feature bugs">
+        <label for="bugFixes">Bug Fixes Spent:</label>
+        <input type="number" id="bugFixes" name="bugFixes" min="0" step="0.5" placeholder="Hours spent on bug fixes">
       </fieldset>
       <label for="date">Date:</label>
       <input type="date" id="date" name="date" required>
 
       <label for="hours">Hours Spent:</label>
-      <input type="number" id="hours" name="hours" min="0" step="0.5" required placeholder="Enter total hours (e.g. 2.5)">
+      <input type="number" id="hours" name="hours" min="0" step="0.5" required
+        placeholder="Enter total hours (e.g. 2.5)">
 
       <button type="submit">Submit Report</button>
-      <div style="text-align: center; margin-top: 26px;color: #838383;"><span>OR</span></div>
+      <!-- <div style="text-align: center; margin-top: 26px;color: #838383;"><span>OR</span></div> -->
     </form>
-    <button id="authButton">Authenticate with Google</button>
+    <!-- <button id="authButton">Authenticate with Google</button> -->
     <div id="successMessage" class="success-message">Report submitted successfully!</div>
 
   </div>
 
   <div id="modal">
     <div class="modal-content">
-      <h2>Connect to Google Sheets</h2>
+      <div class="modal-logo">
+        <img width="80" src="./images/sheets.png" alt="">
+        <h2>Connect to Google Sheets API</h2>
+      </div>
+
       <form id="apiForm">
         <label for="clientId">Client ID:</label>
         <input type="text" id="clientId" name="clientId" required>
@@ -259,7 +310,7 @@
       const modal = document.getElementById('modal');
       const apiForm = document.getElementById('apiForm');
       const reportForm = document.getElementById('reportForm');
-      const authButton = document.getElementById('authButton');
+      // const authButton = document.getElementById('authButton');
 
       // Check if API credentials are stored
       if (!localStorage.getItem('gapi_credentials')) {
@@ -286,7 +337,7 @@
         handleAuthClick();
       });
 
-      authButton.addEventListener('click', handleAuthClick);
+      // authButton.addEventListener('click', handleAuthClick);
     });
 
     function initializeGoogleAPI(credentials) {
@@ -310,11 +361,11 @@
       maybeEnableButtons();
     }
 
-    function maybeEnableButtons() {
-      if (gapiInited && gisInited) {
-        document.getElementById('authButton').style.display = 'block';
-      }
-    }
+    // function maybeEnableButtons() {
+    //   if (gapiInited && gisInited) {
+    //     document.getElementById('authButton').style.display = 'block';
+    //   }
+    // }
 
     function handleAuthClick() {
       tokenClient.callback = async (resp) => {
@@ -357,7 +408,7 @@
         document.getElementById('successMessage').style.display = 'block';
         document.getElementById('reportForm').reset();
         setTimeout(() => {
-              document.getElementById('successMessage').style.display = 'none';
+          document.getElementById('successMessage').style.display = 'none';
         }, 3000);
       } catch (error) {
         console.error('Error submitting report:', error);
