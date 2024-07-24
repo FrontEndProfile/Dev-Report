@@ -1,0 +1,279 @@
+
+<html><head><base href="https://cloud-library.netlify.app/">
+    <title>Firebase Chat App Setup</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f0f0f0;
+      }
+      .step {
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      h1, h2 {
+        color: #4285F4;
+      }
+      button {
+        background-color: #4285F4;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-right: 10px;
+      }
+      button:hover {
+        background-color: #3267D6;
+      }
+      #chatApp {
+        display: none;
+      }
+      #messages {
+        height: 300px;
+        overflow-y: auto;
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 10px;
+        background-color: white;
+      }
+      #errorMessage {
+        color: red;
+        font-weight: bold;
+      }
+      #userInfo {
+        margin-bottom: 10px;
+        font-weight: bold;
+      }
+      input[type="text"] {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      #firebaseInstructions {
+        background-color: #e6f7ff;
+        border: 1px solid #91d5ff;
+        border-radius: 4px;
+        padding: 15px;
+        margin-bottom: 20px;
+      }
+      #firebaseInstructions ol {
+        margin-top: 0;
+        padding-left: 20px;
+      }
+    </style>
+    </head>
+    <body>
+      <h1>Firebase Chat App Setup</h1>
+      
+      <div id="setup">
+        <div class="step" id="step0">
+          <h2>Step 0: Create Firebase Project</h2>
+          <div id="firebaseInstructions">
+            <p>To create a new Firebase project, follow these steps:</p>
+            <ol>
+              <li>Go to the <a href="https://console.firebase.google.com/" target="_blank">Firebase Console</a></li>
+              <li>Click on "Add project"</li>
+              <li>Enter a project name and follow the setup wizard</li>
+              <li>Once created, click on the web icon (&lt;/&gt;) to add a web app to your project</li>
+              <li>Register the app and copy the configuration object</li>
+            </ol>
+          </div>
+          <button onclick="showConfigForm()">I've created a Firebase project</button>
+        </div>
+    
+        <div class="step" id="step1" style="display:none;">
+          <h2>Step 1: Enter Firebase Configuration</h2>
+          <form id="configForm">
+            <label for="apiKey">API Key:</label><br>
+            <input type="text" id="apiKey" name="apiKey" required><br>
+            <label for="authDomain">Auth Domain:</label><br>
+            <input type="text" id="authDomain" name="authDomain" required><br>
+            <label for="projectId">Project ID:</label><br>
+            <input type="text" id="projectId" name="projectId" required><br>
+            <button type="submit">Initialize Firebase</button>
+          </form>
+        </div>
+        
+        <div class="step" id="step2" style="display:none;">
+          <h2>Step 2: Choose Authentication Method</h2>
+          <button id="anonymousSignIn">Continue as Anonymous</button>
+          <button id="googleSignIn">Sign In with Google</button>
+          <p id="errorMessage"></p>
+        </div>
+      </div>
+      
+      <div id="chatApp">
+        <h2>Chat App</h2>
+        <div id="userInfo"></div>
+        <div id="messages"></div>
+        <form id="messageForm">
+          <input type="text" id="messageInput" placeholder="Type a message..." required>
+          <button type="submit">Send</button>
+        </form>
+        <button id="signOut">Sign Out</button>
+      </div>
+    
+      <script>
+        let firebaseApp;
+        
+        function showConfigForm() {
+          document.getElementById('step0').style.display = 'none';
+          document.getElementById('step1').style.display = 'block';
+          
+          // Load saved config from localStorage if available
+          const savedConfig = JSON.parse(localStorage.getItem('firebaseConfig'));
+          if (savedConfig) {
+            document.getElementById('apiKey').value = savedConfig.apiKey || '';
+            document.getElementById('authDomain').value = savedConfig.authDomain || '';
+            document.getElementById('projectId').value = savedConfig.projectId || '';
+          }
+        }
+    
+        document.getElementById('configForm').addEventListener('submit', function(e) {
+          e.preventDefault();
+          const config = {
+            apiKey: document.getElementById('apiKey').value,
+            authDomain: document.getElementById('authDomain').value,
+            projectId: document.getElementById('projectId').value
+          };
+          initializeFirebase(config);
+        });
+        
+        function initializeFirebase(config) {
+          try {
+            firebaseApp = firebase.initializeApp(config);
+            
+            // Save config to localStorage
+            localStorage.setItem('firebaseConfig', JSON.stringify(config));
+            
+            document.getElementById('step0').style.display = 'none';
+            document.getElementById('step1').style.display = 'none';
+            document.getElementById('step2').style.display = 'block';
+          } catch (error) {
+            console.error('Error initializing Firebase:', error);
+            document.getElementById('errorMessage').textContent = 'Error initializing Firebase: ' + error.message;
+          }
+        }
+        
+        document.getElementById('anonymousSignIn').addEventListener('click', function() {
+          firebase.auth().signInAnonymously()
+            .then(() => {
+              console.log('User signed in anonymously');
+              startChat();
+            })
+            .catch((error) => {
+              console.error('Error during anonymous sign in:', error);
+              document.getElementById('errorMessage').textContent = 'Error: ' + error.message;
+            });
+        });
+    
+        document.getElementById('googleSignIn').addEventListener('click', function() {
+          const provider = new firebase.auth.GoogleAuthProvider();
+          firebase.auth().signInWithPopup(provider)
+            .then((result) => {
+              console.log('User signed in with Google:', result.user);
+              startChat();
+            }).catch((error) => {
+              console.error('Error during Google sign in:', error);
+              document.getElementById('errorMessage').textContent = 'Error: ' + error.message;
+              if (error.code === 'auth/unauthorized-domain') {
+                document.getElementById('errorMessage').textContent += ' Please add ' + window.location.hostname + ' to the authorized domains in your Firebase console (Authentication > Sign-in method > Authorized domains).';
+              }
+            });
+        });
+        
+        function startChat() {
+          document.getElementById('setup').style.display = 'none';
+          document.getElementById('chatApp').style.display = 'block';
+          initChat();
+        }
+    
+        function initChat() {
+          const db = firebase.firestore();
+          const messagesRef = db.collection('messages');
+          const user = firebase.auth().currentUser;
+          
+          // Display user info
+          const userInfoDiv = document.getElementById('userInfo');
+          userInfoDiv.textContent = user.isAnonymous ? 'Anonymous User' : `Signed in as: ${user.displayName || user.email}`;
+          
+          // Load and display messages
+          messagesRef.orderBy('timestamp').onSnapshot((snapshot) => {
+            const messagesDiv = document.getElementById('messages');
+            messagesDiv.innerHTML = '';
+            snapshot.forEach((doc) => {
+              const message = doc.data();
+              const messageElement = document.createElement('p');
+              messageElement.textContent = `${message.user}: ${message.text}`;
+              messagesDiv.appendChild(messageElement);
+            });
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+          }, (error) => {
+            console.error("Error loading messages:", error);
+            document.getElementById('errorMessage').textContent = 'Error loading messages: ' + error.message;
+          });
+          
+          // Send new messages
+          document.getElementById('messageForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const messageInput = document.getElementById('messageInput');
+            const message = messageInput.value;
+            
+            messagesRef.add({
+              user: user.isAnonymous ? 'Anonymous' : user.displayName || user.email,
+              text: message,
+              timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => {
+              messageInput.value = '';
+            }).catch((error) => {
+              console.error('Error sending message:', error);
+              document.getElementById('errorMessage').textContent = 'Error sending message: ' + error.message;
+            });
+          });
+        }
+    
+        document.getElementById('signOut').addEventListener('click', function() {
+          firebase.auth().signOut().then(() => {
+            console.log('User signed out');
+            document.getElementById('chatApp').style.display = 'none';
+            document.getElementById('step0').style.display = 'block';
+            document.getElementById('errorMessage').textContent = '';
+          }).catch((error) => {
+            console.error('Error signing out:', error);
+            document.getElementById('errorMessage').textContent = 'Error signing out: ' + error.message;
+          });
+        });
+    
+        // Check if Firebase is already initialized
+        function initializeFirebaseFromStorage() {
+          const savedConfig = JSON.parse(localStorage.getItem('firebaseConfig'));
+          if (savedConfig && savedConfig.apiKey && savedConfig.authDomain && savedConfig.projectId) {
+            initializeFirebase(savedConfig);
+            
+            // Check if user is already signed in
+            firebase.auth().onAuthStateChanged((user) => {
+              if (user) {
+                console.log('User is already signed in:', user);
+                startChat();
+              }
+            });
+          }
+        }
+    
+        // Run initialization on page load
+        initializeFirebaseFromStorage();
+      </script>
+    </body>
+    </html>
