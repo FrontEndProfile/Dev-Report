@@ -4,78 +4,143 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Developer Daily Report</title>
     <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    
+      :root {
+        --primary-color: #3498db;
+        --text-color: #2c3e50;
+        --background-color: #ecf0f1;
+        --card-background: #ffffff;
+        --border-color: #bdc3c7;
+        --placeholder-color: #95a5a6;
+        --success-color: #2ecc71;
+        --hover-color: #2980b9;
+      }
+    
       body {
-        font-family: Arial, sans-serif;
-        background-color: #f0f0f0;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+        background-color: var(--background-color);
         margin: 0;
         padding: 20px;
         display: flex;
         justify-content: center;
         align-items: center;
         min-height: 100vh;
+        color: var(--text-color);
       }
+    
       .container {
-        background-color: white;
-        padding: 30px;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        background-color: var(--card-background);
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         width: 100%;
         max-width: 500px;
       }
-      h1, h2 {
+    
+      h1 {
         text-align: center;
-        color: #333;
+        color: var(--text-color);
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 30px;
       }
+    
       form {
         display: flex;
         flex-direction: column;
       }
+    
       label {
-        margin-top: 10px;
-        font-weight: bold;
+        margin-top: 20px;
+        font-weight: 600;
+        color: var(--text-color);
+        font-size: 14px;
       }
+    
       input, select, textarea {
         width: 100%;
-        padding: 8px;
-        margin-top: 5px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
+        padding: 12px 16px;
+        margin-top: 8px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
         box-sizing: border-box;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        background-color: var(--card-background);
+        color: var(--text-color);
       }
+    
+      input::placeholder, textarea::placeholder {
+        color: var(--placeholder-color);
+      }
+    
+      input:focus, select:focus, textarea:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+      }
+    
       button {
-        background-color: #4CAF50;
+        background-color: var(--primary-color);
+        color: white;
+        padding: 14px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        margin-top: 30px;
+        font-size: 16px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+    
+      button:hover {
+        background-color: var(--hover-color);
+      }
+    
+      .category-wrapper {
+        position: relative;
+      }
+    
+      .category-wrapper::after {
+        content: '▼';
+        font-size: 12px;
+        color: var(--placeholder-color);
+        position: absolute;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        pointer-events: none;
+      }
+    
+      select {
+        appearance: none;
+        -webkit-appearance: none;
+        padding-right: 40px;
+      }
+    
+      .time-category {
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 20px;
+        margin-top: 20px;
+        background-color: #f8f9fa;
+      }
+    
+      .time-category h3 {
+        font-size: 16px;
+        margin: 0 0 15px 0;
+        color: var(--text-color);
+      }
+    
+      .success-message {
+        background-color: var(--success-color);
         color: white;
         padding: 10px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
+        border-radius: 8px;
+        text-align: center;
         margin-top: 20px;
-      }
-      button:hover {
-        background-color: #45a049;
-      }
-      #modal {
         display: none;
-        position: fixed;
-        z-index: 1;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0,0,0,0.4);
-      }
-      .modal-content {
-        background-color: #fefefe;
-        margin: 15% auto;
-        padding: 20px;
-        border: 1px solid #888;
-        width: 80%;
-        max-width: 500px;
-      }
-      #authButton {
-        display: none;
-        margin-top: 10px;
       }
     </style>
     </head>
@@ -84,160 +149,127 @@
         <h1>Developer Daily Report</h1>
         <form id="reportForm">
           <label for="task">Task:</label>
-          <textarea id="task" name="task" rows="3" required></textarea>
+          <textarea id="task" name="task" rows="3" required placeholder="Describe your task here..."></textarea>
           
           <label for="category">Category:</label>
-          <select id="category" name="category" required>
-            <option value="">Select a category</option>
-            <option value="Bug">Bug</option>
-            <option value="R&D">R&D</option>
-            <option value="Feature">Feature</option>
-          </select>
+          <div class="category-wrapper">
+            <select id="category" name="category" required>
+              <option value="" disabled selected>Select a category</option>
+              <option value="Bug">Bug</option>
+              <option value="R&D">R&D</option>
+              <option value="Feature">Feature</option>
+            </select>
+          </div>
           
+          <div class="time-category">
+            <h3>Optional Time Categories</h3>
+            <label for="featureSpent">Feature Spent:</label>
+            <input type="number" id="featureSpent" name="featureSpent" min="0" step="0.5" placeholder="Hours spent on features">
+    
+            <label for="featureBugSpent">Feature Bug Spent:</label>
+            <input type="number" id="featureBugSpent" name="featureBugSpent" min="0" step="0.5" placeholder="Hours spent on feature bugs">
+    
+            <label for="bugFixesSpent">Bug Fixes Spent:</label>
+            <input type="number" id="bugFixesSpent" name="bugFixesSpent" min="0" step="0.5" placeholder="Hours spent on bug fixes">
+          </div>
+    
           <label for="date">Date:</label>
           <input type="date" id="date" name="date" required>
           
-          <label for="hours">Hours Spent:</label>
-          <input type="number" id="hours" name="hours" min="0" step="0.5" required>
+          <label for="hours">Total Hours Spent:</label>
+          <input type="number" id="hours" name="hours" min="0" step="0.5" required placeholder="Enter total hours (e.g. 2.5)">
           
           <button type="submit">Submit Report</button>
         </form>
-        <button id="authButton">Authenticate with Google</button>
-      </div>
-    
-      <div id="modal">
-        <div class="modal-content">
-          <h2>Connect to Google Sheets</h2>
-          <form id="apiForm">
-            <label for="clientId">Client ID:</label>
-            <input type="text" id="clientId" name="clientId" required>
-            
-            <label for="apiKey">API Key:</label>
-            <input type="text" id="apiKey" name="apiKey" required>
-            
-            <label for="spreadsheetId">Spreadsheet ID:</label>
-            <input type="text" id="spreadsheetId" name="spreadsheetId" required>
-            
-            <label for="sheetRange">Sheet Range:</label>
-            <input type="text" id="sheetRange" name="sheetRange" required placeholder="e.g., Sheet1!A:D">
-            
-            <button type="submit">Connect</button>
-          </form>
-        </div>
+        <div id="successMessage" class="success-message">Report submitted successfully!</div>
       </div>
     
       <script src="https://apis.google.com/js/api.js"></script>
-      <script src="https://accounts.google.com/gsi/client"></script>
       <script>
-        let tokenClient;
-        let gapiInited = false;
-        let gisInited = false;
+        // Your client ID and API key from the Developer Console
+        const CLIENT_ID = 'YOUR_CLIENT_ID';
+        const API_KEY = 'YOUR_API_KEY';
     
-        document.addEventListener('DOMContentLoaded', function() {
-          const modal = document.getElementById('modal');
-          const apiForm = document.getElementById('apiForm');
-          const reportForm = document.getElementById('reportForm');
-          const authButton = document.getElementById('authButton');
+        // Array of API discovery doc URLs for APIs used by the quickstart
+        const DISCOVERY_DOCS = ["https://sheets.googleapis.com/$discovery/rest?version=v4"];
     
-          // Check if API credentials are stored
-          if (!localStorage.getItem('gapi_credentials')) {
-            modal.style.display = 'block';
+        // Authorization scopes required by the API
+        const SCOPES = "https://www.googleapis.com/auth/spreadsheets";
+    
+        function handleClientLoad() {
+          gapi.load('client:auth2', initClient);
+        }
+    
+        function initClient() {
+          gapi.client.init({
+            apiKey: API_KEY,
+            clientId: CLIENT_ID,
+            discoveryDocs: DISCOVERY_DOCS,
+            scope: SCOPES
+          }).then(function () {
+            // Listen for sign-in state changes.
+            gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
+    
+            // Handle the initial sign-in state.
+            updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+          }, function(error) {
+            console.error('Error initializing Google API:', error);
+          });
+        }
+    
+        function updateSigninStatus(isSignedIn) {
+          if (isSignedIn) {
+            // User is signed in, enable form submission
+            document.getElementById('reportForm').onsubmit = submitReport;
           } else {
-            initializeGoogleAPI(JSON.parse(localStorage.getItem('gapi_credentials')));
-          }
-    
-          apiForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const credentials = {
-              clientId: document.getElementById('clientId').value,
-              apiKey: document.getElementById('apiKey').value,
-              spreadsheetId: document.getElementById('spreadsheetId').value,
-              sheetRange: document.getElementById('sheetRange').value
+            // User is not signed in, handle authentication when form is submitted
+            document.getElementById('reportForm').onsubmit = function(event) {
+              event.preventDefault();
+              gapi.auth2.getAuthInstance().signIn().then(submitReport);
             };
-            localStorage.setItem('gapi_credentials', JSON.stringify(credentials));
-            modal.style.display = 'none';
-            initializeGoogleAPI(credentials);
-          });
-    
-          reportForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            handleAuthClick();
-          });
-    
-          authButton.addEventListener('click', handleAuthClick);
-        });
-    
-        function initializeGoogleAPI(credentials) {
-          gapi.load('client', () => {
-            gapi.client.init({
-              apiKey: credentials.apiKey,
-              discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
-            }).then(() => {
-              gapiInited = true;
-              maybeEnableButtons();
-            });
-          });
-    
-          tokenClient = google.accounts.oauth2.initTokenClient({
-            client_id: credentials.clientId,
-            scope: 'https://www.googleapis.com/auth/spreadsheets',
-            callback: '', // defined later
-          });
-    
-          gisInited = true;
-          maybeEnableButtons();
-        }
-    
-        function maybeEnableButtons() {
-          if (gapiInited && gisInited) {
-            document.getElementById('authButton').style.display = 'block';
           }
         }
     
-        function handleAuthClick() {
-          tokenClient.callback = async (resp) => {
-            if (resp.error !== undefined) {
-              throw (resp);
-            }
-            await submitReport();
-          };
-    
-          if (gapi.client.getToken() === null) {
-            tokenClient.requestAccessToken({prompt: 'consent'});
-          } else {
-            tokenClient.requestAccessToken({prompt: ''});
-          }
-        }
-    
-        async function submitReport() {
-          const credentials = JSON.parse(localStorage.getItem('gapi_credentials'));
-          const formData = new FormData(document.getElementById('reportForm'));
-          const report = Object.fromEntries(formData.entries());
+        function submitReport(event) {
+          if (event) event.preventDefault();
           
-          const taskLines = report.task.split('\n').filter(line => line.trim() !== '');
-          const formattedTask = taskLines.length > 1 
-            ? taskLines.map(line => `• ${line}`).join('\n')
-            : report.task;
+          const task = document.getElementById('task').value;
+          const category = document.getElementById('category').value;
+          const featureSpent = document.getElementById('featureSpent').value || '0';
+          const featureBugSpent = document.getElementById('featureBugSpent').value || '0';
+          const bugFixesSpent = document.getElementById('bugFixesSpent').value || '0';
+          const date = document.getElementById('date').value;
+          const hours = document.getElementById('hours').value;
+    
+          const formattedDate = new Date(date).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+          });
     
           const values = [
-            [formattedTask, report.category, report.date, report.hours]
+            ['', task, category, formattedDate, hours, featureSpent, featureBugSpent, bugFixesSpent]
           ];
     
-          try {
-            const response = await gapi.client.sheets.spreadsheets.values.append({
-              spreadsheetId: credentials.spreadsheetId,
-              range: credentials.sheetRange,
-              valueInputOption: 'USER_ENTERED',
-              resource: { values: values }
-            });
+          gapi.client.sheets.spreadsheets.values.append({
+            spreadsheetId: '1jbBSwireFHWEqeW2XLnW2PSHVytISaX5C-8-O1TdD7M',
+            range: 'Sheet1!A:H',
+            valueInputOption: 'USER_ENTERED',
+            resource: { values: values }
+          }).then(function(response) {
             console.log('Report submitted:', response);
-            alert('Report submitted successfully!');
+            document.getElementById('successMessage').style.display = 'block';
             document.getElementById('reportForm').reset();
-          } catch (error) {
+            setTimeout(() => {
+              document.getElementById('successMessage').style.display = 'none';
+            }, 3000);
+          }, function(error) {
             console.error('Error submitting report:', error);
             alert('Error submitting report. Please try again.');
-          }
+          });
         }
+    
+        handleClientLoad();
       </script>
     </body>
     </html>
