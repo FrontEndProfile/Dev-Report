@@ -235,6 +235,9 @@
       margin-top: 20px;
       display: none;
     }
+    .space-md {
+      margin-bottom: 12px;
+    }
   </style>
 </head>
 
@@ -260,20 +263,22 @@
 
       <fieldset class="time-category">
         <legend>Optional Time category</legend>
+
         <label for="feature">Feature Spent:</label>
-        <input type="number" id="feature" name="feature" min="0" step="0.5" placeholder="Hours spent on features">
+        <input class="space-md" type="number" id="feature" name="feature" min="0" step="0.5" placeholder="Hours spent on features" value="0" required>
+
         <label for="featureBug">FeatureBug Spent:</label>
-        <input type="number" id="featureBug" name="featureBug" min="0" step="0.5"
-          placeholder="Hours spent on feature bugs">
+        <input class="space-md" type="number" id="featureBug" name="featureBug" min="0" step="0.5" placeholder="Hours spent on feature bugs" value="0" required>
+
         <label for="bugFixes">Bug Fixes Spent:</label>
-        <input type="number" id="bugFixes" name="bugFixes" min="0" step="0.5" placeholder="Hours spent on bug fixes">
+        <input class="space-md" type="number" id="bugFixes" name="bugFixes" min="0" step="0.5" placeholder="Hours spent on bug fixes" value="0" required>
+
       </fieldset>
       <label for="date">Date:</label>
       <input type="date" id="date" name="date" required>
 
       <label for="hours">Hours Spent:</label>
-      <input type="number" id="hours" name="hours" min="0" step="0.5" required
-        placeholder="Enter total hours (e.g. 2.5)">
+      <input type="number" id="hours" name="hours" min="0" step="0.5" required placeholder="Enter total hours (e.g. 2.5)">
 
       <button type="submit">Submit Report</button>
       <!-- <div style="text-align: center; margin-top: 26px;color: #838383;"><span>OR</span></div> -->
